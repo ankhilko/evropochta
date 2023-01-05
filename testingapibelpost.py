@@ -39,8 +39,8 @@ def request_to_api(number):
             return f"EVROPOCHTA {number} => {reply['Timex']}: {reply['InfoTrack']}"
         except KeyError:
             request2 = requests.post(url=belpost_api, params=params)
-            reply2 = list(request2.json()['data'])[0]['steps'][0]
             try:
+                reply2 = list(request2.json()['data'])[0]['steps'][0]
                 return f"BELPOST {number} => {reply2['created_at']}: {reply2['place']}: {reply2['event']}"
             except:
                 return f"{number} => {reply['ErrorDescription']}"
@@ -52,7 +52,7 @@ def clicked_1():
     text_box_1.delete('1.0', END)
     codes = []
     for item in text.split():
-        codes.append(request_to_api(item, evropochta_url, headers))
+        codes.append(request_to_api(item))
     text_box_1.insert('1.0', '\n'.join(codes))
 
 
