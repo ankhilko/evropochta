@@ -26,19 +26,24 @@ program_window.minsize(width=200, height=100)
 program_window.config(padx=10, pady=10)
 
 evropochta_url = 'https://evropochta.by/api/track.json'
-# belpost_api = 'https://api.belpost.by/api/v1/tracking'
+belpost_api = 'https://api.belpost.by/api/v1/tracking'
 headers = {"User-agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36"}
 
 
-def request_to_api(number, api, headers):
+def request_to_api(number):
     if len(number) > 0:
         params = {'number': number}
-        request = requests.post(url=api, params=params, headers=headers)
+        request = requests.post(url=evropochta_url, params=params, headers=headers)
         reply = list(request.json()['data'])[0]
         try:
             return f"EVROPOCHTA {number} => {reply['Timex']}: {reply['InfoTrack']}"
         except KeyError:
-            return f"{number} => {reply['ErrorDescription']}"
+            request2 = requests.post(url=belpost_api, params=params)
+            reply2 = list(request2.json()['data'])[0]['steps'][0]
+            try:
+                return f"BELPOST {number} => {reply2['created_at']}: {reply2['place']}: {reply2['event']}"
+            except:
+                return f"{number} => {reply['ErrorDescription']}"
     return ''
 
 
@@ -65,7 +70,5 @@ text_box_1.grid(row=2, column=0, columnspan=7)
 button_copy = Button(text='copy', command=copy)
 button_copy.grid(row=4, column=3)
 
-
-# new = text_box.get('1.0', END) # 1 - starting from the 1st line and position 0
-
 program_window.mainloop()
+
