@@ -1,6 +1,7 @@
 from tkinter import Button, Tk, END, Text
 import requests
 import win32clipboard
+from time import sleep
 
 
 def copy():
@@ -38,6 +39,7 @@ def request_to_api(number):
         try:
             return f"EVROPOCHTA {number} => {reply['Timex']}: {reply['InfoTrack']}"
         except KeyError:
+            sleep(1)
             request2 = requests.post(url=belpost_api, params=params)
             try:
                 reply2 = list(request2.json()['data'])[0]['steps'][0]
